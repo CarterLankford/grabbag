@@ -22,6 +22,13 @@ import subprocess
 """
 
 userInputArg1 = sys.argv[1]
+#userInputArg2 = sys.argv[2]
+userInputArg2 = []
+
+
+
+
+
 
 #needs to have logs
 #needs to functions for things done
@@ -107,9 +114,13 @@ def updateLog(pathToLog, message, time):
 ###############################
 def setup_Env():
     send_CMD_Mkdir("payload/log/output")
+    send_CMD_Get_All_File_Types()
+    fileExtensionList = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
+    fullFileList = generate_Target_File_List("payload/log/", "completeTargetList.txt")
 
 def clean_Env():
-    proc1 = subprocess.Popen(['rm', '-rf', 'payload/log/output'], stdout=subprocess.PIPE)
+    proc1 = subprocess.Popen(['rm', '-rf', 'payload/log/'], stdout=subprocess.PIPE)
+    #proc1 = subprocess.Popen(['rm', '-rf', 'payload/log/output'], stdout=subprocess.PIPE)
 
 def purge_Env():
     proc1 = subprocess.Popen(['rm', '-rf', 'payload/'], stdout=subprocess.PIPE)
@@ -147,9 +158,49 @@ def main():
     ## generate list, or copy specific file type
     ##tell user how to use this damn thing without having to read the code you ass. print out to line and log.
     ##when getting file type list. need to pull from text file and order it correctly
+    #can I string multiple file types in one argument surround by "" Need to test how so I can send with one command not 50
+
+    if len(sys.argv) > 2:
+        if len(sys.argv[2]) > 2:
+            try:
+                userInputArg2 = [x for x in sys.argv[2].split(',')]
+            except ValueError:
+                print("Error: List must be comma-separated values.")
+        else:
+            print("Error: Missing required argument.")
+
     if userInputArg1 == "test":
-        ftl = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
+        #ftl = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
         #print(ftl[20])
+        print(len(userInputArg2))
+        print(userInputArg2)
+        setup_Env()
+        send_CMD_Get_All_File_Types()
+
+        fileExtensionList = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
+        fullFileList = generate_Target_File_List("payload/log/", "completeTargetList.txt")
+
+        for i in userInputArg2:
+            copy_File_Type(fullFileList, i, "payload/log/output")
+
+        #copy_File_Type(fullFileList, ".jpg", "payload/log/")
+        exit 
+        #copy_File_Type(fullFileList, userInputArg2, "payload/log/output")
+    elif userInputArg1 == "copylist":
+        #flow: clean, setup, then below 
+        #python3 dirDiscovery.py copylist ".txt,.pdf,.doc"
+
+        setup_Env()
+        fileExtensionList = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
+        fullFileList = generate_Target_File_List("payload/log/", "completeTargetList.txt")
+
+        
+        
+
+        for i in userInputArg2:
+            copy_File_Type(fullFileList, i, "payload/log/output")
+        exit 
+        #copy_File_Type(fullFileList, userInputArg2, "payload/log/output")
     elif userInputArg1 == "clean":
         clean_Env()
     elif userInputArg1 == "setup":
@@ -162,11 +213,9 @@ def main():
     elif userInputArg1 == "getTypeList":
         send_CMD_Get_All_File_Types()
         fileExtensionList = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
-        for i in fileExtensionList:
-            print(i)
     elif userInputArg1 == "type":
         #python3 dirDiscovery.py type .mp3 & python3 dirDiscovery.py type .mp4 ##Need to find a way to do this from an input list
-        userInputArg2 = sys.argv[2]
+        
         setup_Env()
         send_CMD_Get_All_File_Types()
         fileExtensionList = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
@@ -182,9 +231,7 @@ def main():
                 print(i)
                 #update the log
                 copy_File_To(i,payloadDir)
-        """
-                
-        
+        """        
     else:
         # Specify the source text file containing file paths
         #source_file_path = "test.txt"
