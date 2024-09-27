@@ -176,26 +176,18 @@ def main():
         print(userInputArg2)
         setup_Env()
         send_CMD_Get_All_File_Types()
-
         fileExtensionList = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
         fullFileList = generate_Target_File_List("payload/log/", "completeTargetList.txt")
-
         for i in userInputArg2:
             copy_File_Type(fullFileList, i, "payload/log/output")
-
-        #copy_File_Type(fullFileList, ".jpg", "payload/log/")
         exit 
-        #copy_File_Type(fullFileList, userInputArg2, "payload/log/output")
+        
     elif userInputArg1 == "copylist":
         #flow: clean, setup, then below 
         #python3 dirDiscovery.py copylist ".txt,.pdf,.doc"
-
         setup_Env()
         fileExtensionList = generate_File_Type_List("payload/log/", "fileExtensionList.txt")
         fullFileList = generate_Target_File_List("payload/log/", "completeTargetList.txt")
-
-        
-        
 
         for i in userInputArg2:
             copy_File_Type(fullFileList, i, "payload/log/output")
